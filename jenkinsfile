@@ -1,68 +1,38 @@
+
 pipeline {
     agent any
-    
-    triggers {
-        // Déclenche le build dès qu'un changement est détecté dans le dépôt Git.
-        pollSCM('H/1 * * * *')
+
+    tools {
+        jdk 'JAVA_HOME'
+        maven 'M2_HOME'
     }
 
     stages {
-        stage('Checkout') {
+        stage('GIT') {
             steps {
+                // Cloner le dépôt Git
                 git branch: 'gestion_Subscription', url: 'https://github.com/Mahmoud-Amri/Devops_Gestion-Sky.git'
             }
         }
 
-        stage('Maven Clean') {
+        stage('Compile Stage') {
             steps {
-                sh 'mvn clean'
+                // Compiler le projet
+                sh 'mvn clean compile'
             }
         }
 
-        // stage('Maven Install') {
-        //     steps {
-        //         // Exécuter la commande Maven install
-        //         sh 'mvn install'
-        //     }
-        // }
-        
-        stage('Maven compile') {
+        stage('Test Stage') {
             steps {
-                sh 'mvn compile'
-            }
-        }
-
-
-        stage('Maven test') {
-            steps {
+                // Exécuter les tests unitaires
                 sh 'mvn test'
             }
-        }
-
-
-
-        stage('Maven package') {
-            steps {
-                sh 'mvn package'
+            // Optionnel : vous pouvez ajouter un post-action pour gérer les résultats de test
+            post {
+                always {
+                    junit '**/target/surefire-reports/*.xml' // Utilisez cette ligne si vous générez des rapports de test JUnit
+                }
             }
-        }
-
-        // stage('Maven Install') {
-        //     steps {
-        //         // Exécuter la commande Maven install
-        //         sh 'mvn install'
-        //     }
-        // }
-
-        
-
-
-        
-    }
-
-    post {
-        always {
-            echo 'Pipeline terminé.'
         }
     }
 }
