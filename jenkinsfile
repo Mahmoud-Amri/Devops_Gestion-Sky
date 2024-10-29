@@ -1,6 +1,10 @@
 pipeline {
     agent any
-
+   environment {
+        // SonarQube environment variables
+        SONARQUBE_URL = 'http://192.168.50.4:9000'
+        SONARQUBE_TOKEN = 'sqa_2087aa03631e1a3f065e98c85f3a9d74758958fb'
+    }
     tools {
         jdk 'JAVA_HOME'
         maven 'M2_HOME'
@@ -21,12 +25,19 @@ pipeline {
             }
         }
         stage('SonarQube Analysis') {
-            steps {
-                script {
-                    sh ' mvn sonar:sonar '
+                    steps {
+                        script {
+                            // Run SonarQube analysis using the correct token property
+                            sh """
+                            mvn sonar:sonar \
+                                -Dsonar.projectKey=Jenkins Integration\
+                                -Dsonar.host.url=${SONARQUBE_URL} \
+                                -Dsonar.token=${SONARQUBE_TOKEN}
+                            """
+                        }
+                    }
                 }
-            }
-        }
+
         stage('Test Stage') {
             steps {
                 // Exécuter les tests unitaires
