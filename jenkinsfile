@@ -2,7 +2,7 @@ pipeline {
     agent any
    environment {
         // SonarQube environment variables
-        SONARQUBE_URL = 'http://192.168.50.4:9000'
+        SONARQUBE_URL = 'http://192.168.100.145:9000'
         SONARQUBE_TOKEN = 'sqa_2087aa03631e1a3f065e98c85f3a9d74758958fb'
     }
     tools {
