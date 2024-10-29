@@ -20,7 +20,13 @@ pipeline {
                 sh 'mvn clean compile'
             }
         }
-
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    sh ' mvn sonar:sonar '
+                }
+            }
+        }
         stage('Test Stage') {
             steps {
                 // Exécuter les tests unitaires
