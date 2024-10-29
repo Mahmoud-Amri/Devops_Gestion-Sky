@@ -30,7 +30,7 @@ pipeline {
                             // Run SonarQube analysis using the correct token property
                             sh """
                             mvn sonar:sonar \
-                                -Dsonar.projectKey="Jenkins Integration"\
+                                -Dsonar.projectKey="Jenkins_Integration"\
                                 -Dsonar.host.url=${SONARQUBE_URL} \
                                 -Dsonar.token=${SONARQUBE_TOKEN}
                             """
