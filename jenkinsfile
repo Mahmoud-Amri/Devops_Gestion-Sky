@@ -1,8 +1,8 @@
 pipeline {
     agent any
-   environment {
-        // SonarQube environment variables
-        SONARQUBE_URL = 'http://192.168.100.145:9000'
+    environment {
+        // Variables d'environnement pour SonarQube
+        SONARQUBE_URL = 'http://192.168.1.48:9000'
         SONARQUBE_TOKEN = 'sqa_2087aa03631e1a3f065e98c85f3a9d74758958fb'
     }
     tools {
@@ -24,31 +24,40 @@ pipeline {
                 sh 'mvn clean compile'
             }
         }
+
         stage('SonarQube Analysis') {
-                    steps {
-                        script {
-                            // Run SonarQube analysis using the correct token property
-                            sh """
-                            mvn sonar:sonar \
-                                -Dsonar.projectKey="Jenkins_Integration"\
-                                -Dsonar.host.url=${SONARQUBE_URL} \
-                                -Dsonar.token=${SONARQUBE_TOKEN}
-                            """
-                        }
-                    }
+            steps {
+                script {
+                    // Analyse SonarQube avec le jeton
+                    sh """
+                    mvn sonar:sonar \
+                        -Dsonar.projectKey="Jenkins_Integration" \
+                        -Dsonar.host.url=${SONARQUBE_URL} \
+                        -Dsonar.token=${SONARQUBE_TOKEN}
+                    """
                 }
+            }
+        }
 
         stage('Test Stage') {
             steps {
                 // Exécuter les tests unitaires
                 sh 'mvn test'
             }
-            // Optionnel : vous pouvez ajouter un post-action pour gérer les résultats de test
-            post {
-                always {
-                    junit '**/target/surefire-reports/*.xml' // Utilisez cette ligne si vous générez des rapports de test JUnit
-                }
+        }
+
+        stage('Maven Deploy') {
+            steps {
+                // Déployer le projet avec Maven
+                sh 'mvn deploy'
             }
+        }
+    }
+
+    post {
+        always {
+            // Gérer les rapports de test JUnit après le pipeline
+            junit '**/target/surefire-reports/*.xml'
         }
     }
 }
