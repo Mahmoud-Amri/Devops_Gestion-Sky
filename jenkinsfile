@@ -2,8 +2,10 @@ pipeline {
     agent any
     environment {
         // Variables d'environnement pour SonarQube
-        SONARQUBE_URL = 'http://192.168.1.48:9000'
+        SONARQUBE_URL = 'http://192.168.100.221:9000'
         SONARQUBE_TOKEN = 'sqa_2087aa03631e1a3f065e98c85f3a9d74758958fb'
+        DOCKER_USERNAME = 'amri.mahmoud@esprit.tn'
+        DOCKER_PASSWORD = '310800mah'
     }
     tools {
         jdk 'JAVA_HOME'
@@ -53,6 +55,27 @@ pipeline {
             }
         }
     }
+
+     stage('Docker Login') {
+                steps {
+                    script {
+                        // Connexion à Docker Hub avec les informations en clair (Non recommandé)
+                        sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
+                    }
+                }
+            }
+
+            stage('Build and Push Docker Image') {
+                steps {
+                    script {
+                        // Build Docker image
+                        sh 'docker build -t my-image:${BUILD_ID} .'
+
+                        // Push Docker image
+                        sh 'docker push my-image:${BUILD_ID}'
+                    }
+                }
+            }
 
     post {
         always {

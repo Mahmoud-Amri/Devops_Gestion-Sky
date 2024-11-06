@@ -1,0 +1,27 @@
+version: '3'  # Vous pouvez supprimer cette ligne si elle est obsolète
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: your_password
+      MYSQL_DATABASE: your_database_name
+      MYSQL_USER: your_user
+      MYSQL_PASSWORD: your_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  spring_project:
+    build: .
+    container_name: spring_project
+    ports:
+      - "8089:8089"  # Utiliser le port 8084 sur l'hôte et le port 8084 dans le conteneur
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/your_database_name
+      SPRING_DATASOURCE_USERNAME: your_user
+      SPRING_DATASOURCE_PASSWORD: your_password
+    depends_on:
+      - mysql
+volumes:
+  mysql_data:
