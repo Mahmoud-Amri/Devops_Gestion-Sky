@@ -4,8 +4,7 @@ pipeline {
         // Variables d'environnement pour SonarQube
         SONARQUBE_URL = 'http://192.168.100.221:9000'
         SONARQUBE_TOKEN = 'sqa_2087aa03631e1a3f065e98c85f3a9d74758958fb'
-        DOCKER_USERNAME = 'amri.mahmoud@esprit.tn'
-        DOCKER_PASSWORD = '310800mah'
+
     }
     tools {
         jdk 'JAVA_HOME'
