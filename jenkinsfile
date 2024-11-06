@@ -1,7 +1,6 @@
 pipeline {
     agent any
     environment {
-        // Variables d'environnement pour SonarQube
         SONARQUBE_URL = 'http://192.168.100.221:9000'
         SONARQUBE_TOKEN = 'sqa_2087aa03631e1a3f065e98c85f3a9d74758958fb'
     }
@@ -13,14 +12,12 @@ pipeline {
     stages {
         stage('GIT') {
             steps {
-                // Cloner le dépôt Git
                 git branch: 'gestion_instructor', url: 'https://github.com/Mahmoud-Amri/Devops_Gestion-Sky.git'
             }
         }
 
         stage('Compile Stage') {
             steps {
-                // Compiler le projet
                 sh 'mvn clean compile'
             }
         }
@@ -28,7 +25,6 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    // Analyse SonarQube avec le jeton
                     sh """
                     mvn sonar:sonar \
                         -Dsonar.projectKey="Jenkins_Integration" \
@@ -41,14 +37,12 @@ pipeline {
 
         stage('Test Stage') {
             steps {
-                // Exécuter les tests unitaires
                 sh 'mvn test'
             }
         }
 
         stage('Maven Deploy') {
             steps {
-                // Déployer le projet avec Maven
                 sh 'mvn deploy'
             }
         }
@@ -56,7 +50,6 @@ pipeline {
         stage('Docker Login') {
             steps {
                 script {
-                    // Utiliser les credentials Jenkins pour se connecter à Docker Hub
                     withCredentials([usernamePassword(credentialsId: 'docker-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                         sh '''
                             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
@@ -69,8 +62,8 @@ pipeline {
         stage('Build and Push Docker Image') {
             steps {
                 script {
-                    // Build Docker image
-                    sh 'docker build -t my-image:${BUILD_ID} .'
+                    // Build Docker image pour ARM
+                    sh 'docker build --platform linux/arm64 -t my-image:${BUILD_ID} .'
 
                     // Push Docker image
                     sh 'docker push my-image:${BUILD_ID}'
@@ -81,7 +74,6 @@ pipeline {
 
     post {
         always {
-            // Gérer les rapports de test JUnit après le pipeline
             junit '**/target/surefire-reports/*.xml'
         }
     }
