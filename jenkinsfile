@@ -54,28 +54,30 @@ pipeline {
                 sh 'mvn deploy'
             }
         }
-    }
 
-     stage('Docker Login') {
-                steps {
-                    script {
-                        // Connexion à Docker Hub avec les informations en clair (Non recommandé)
+        stage('Docker Login') {
+            steps {
+                script {
+                    // Utiliser les credentials Jenkins pour se connecter à Docker Hub
+                    withCredentials([usernamePassword(credentialsId: 'docker-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                         sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
                     }
                 }
             }
+        }
 
-            stage('Build and Push Docker Image') {
-                steps {
-                    script {
-                        // Build Docker image
-                        sh 'docker build -t my-image:${BUILD_ID} .'
+        stage('Build and Push Docker Image') {
+            steps {
+                script {
+                    // Build Docker image
+                    sh 'docker build -t my-image:${BUILD_ID} .'
 
-                        // Push Docker image
-                        sh 'docker push my-image:${BUILD_ID}'
-                    }
+                    // Push Docker image
+                    sh 'docker push my-image:${BUILD_ID}'
                 }
             }
+        }
+    }
 
     post {
         always {
