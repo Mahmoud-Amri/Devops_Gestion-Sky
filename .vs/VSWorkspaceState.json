@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\test",
+    "\\src\\test\\java",
+    "\\src\\test\\java\\tn",
+    "\\src\\test\\java\\tn\\esprit",
+    "\\src\\test\\java\\tn\\esprit\\spring"
+  ],
+  "SelectedNode": "\\src\\test\\java\\tn\\esprit\\spring\\SubscriptionServicesImplTest.java",
+  "PreviewInSolutionExplorer": false
+}
