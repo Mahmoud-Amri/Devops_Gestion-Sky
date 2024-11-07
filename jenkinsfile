@@ -24,6 +24,13 @@ pipeline {
 
         stage('Verify JAR') {
             steps {
+                sh 'ls -la target/'  // Affiche le contenu du dossier target pour vérifier le nom du fichier JAR
+            }
+        }
+
+
+        stage('Verify JAR') {
+            steps {
                 // Vérifie l'existence du fichier JAR généré
                 sh 'ls -la target/'
                 sh 'find . -name "*.jar"'  // Liste tous les fichiers JAR pour debug
