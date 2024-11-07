@@ -20,5 +20,7 @@ public interface ISubscriptionServices {
 
 	List<SubscriptionDTO> retrieveSubscriptionsByDates(LocalDate startDate, LocalDate endDate);
 
+	void retrieveSubscriptions();
 
+	void showMonthlyRecurringRevenue();
 }
