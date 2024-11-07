@@ -7,7 +7,7 @@ pipeline {
         DOCKER_IMAGE = 'amine6207/amineayari:backend-latest'
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
         SONARQUBE_ENV = 'SonarQube'
-        SONARQUBE_PROJECT_KEY = 'NacerKH_Montoring-containerization-springBoot-angular_AY-Xciv7g-qPkHtLhErl'
+        SONARQUBE_PROJECT_KEY =Montoring-containerization-springBoot-angular_AY-Xciv7g-qPkHtLhErl'
         NEXUS_URL = 'http://172.18.0.1:8081/repository/maven-releases/'
         NEXUS_CREDENTIALS_ID = 'nexus-credentials'
         MAVEN_TOOL = 'mvn' // Maven tool name in Jenkins
