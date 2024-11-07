@@ -16,6 +16,7 @@ pipeline {
             }
         }
 
+
         stage('Compile Project') {
             steps {
                 sh 'mvn clean package'  // Compile le projet et génère le fichier JAR dans le dossier target/
@@ -34,20 +35,19 @@ pipeline {
             steps {
                 // Renomme le fichier JAR généré pour qu'il corresponde au nom attendu par le Dockerfile
                 script {
-                    def jarFile = sh(script: 'ls target/*.jar', returnStdout: true).trim()
-                    sh "mv ${jarFile} target/gestion-station-sky-1.0.jar"
+                    sh 'mv target/*.jar target/gestion-station-sky-1.0.jar'
                 }
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
+                script {
                     sh """
                     mvn sonar:sonar \
                         -Dsonar.projectKey="Jenkins_Integration" \
                         -Dsonar.host.url=${SONARQUBE_URL} \
-                        -Dsonar.login=${SONARQUBE_TOKEN}
+                        -Dsonar.token=${SONARQUBE_TOKEN}
                     """
                 }
             }
@@ -78,7 +78,7 @@ pipeline {
         stage('Build and Push Docker Image') {
             steps {
                 script {
-                    def dockerImage = "amrimahmoud/my-image:${env.BUILD_ID}"
+                    def dockerImage = "amrimahmoud/my-image:${BUILD_ID}"
 
                     sh "docker build -t ${dockerImage} ."
                     sh "docker push ${dockerImage}"
@@ -87,28 +87,19 @@ pipeline {
         }
 
         stage('Start Docker Compose') {
-            steps {
-                script {
-                    // Démarre les services définis dans docker-compose.yml
-                    sh 'docker-compose -f docker-compose.yml up -d'
-                    // Attendre un peu pour que les services soient pleinement opérationnels
-                    sleep 10
-                }
-            }
-        }
-    }
+             steps {
+                 script {
+                       // Démarre les services définis dans docker-compose.yml
+                     sh 'docker-compose -f docker-compose.yml up -d'
+                       // Attendre un peu pour que les services soient pleinement opérationnels
+                     sleep 10
+                  }
+              }
+          }
 
     post {
         always {
             junit '**/target/surefire-reports/*.xml'  // Archive les résultats des tests JUnit pour l'analyse postérieure
-        }
-        cleanup {
-            script {
-                // Arrête les services Docker Compose pour libérer des ressources
-                sh 'docker-compose -f docker-compose.yml down'
-                // Nettoie les images Docker pour éviter l'encombrement
-                sh 'docker image prune -f'
-            }
         }
     }
 }
