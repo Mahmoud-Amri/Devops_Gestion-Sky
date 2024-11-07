@@ -10,30 +10,32 @@ pipeline {
     }
 
     stages {
-        stage('GIT') {
+        stage('Checkout Code') {
             steps {
                 git branch: 'gestion_instructor', url: 'https://github.com/Mahmoud-Amri/Devops_Gestion-Sky.git'
             }
         }
 
-        stage('Compile Stage') {
+        stage('Compile Project') {
             steps {
-                sh 'mvn clean package'  // Génère le JAR dans target/
+                sh 'mvn clean package'  // Compile le projet et génère le fichier JAR dans le dossier target/
             }
         }
 
         stage('Verify JAR') {
             steps {
-                sh 'ls -la target/'  // Affiche le contenu du dossier target pour vérifier le nom du fichier JAR
-            }
-        }
-
-
-        stage('Verify JAR') {
-            steps {
-                // Vérifie l'existence du fichier JAR généré
+                // Affiche le contenu du dossier target pour vérifier la génération du JAR
                 sh 'ls -la target/'
-                sh 'find . -name "*.jar"'  // Liste tous les fichiers JAR pour debug
+                sh 'find . -name "*.jar"'  // Liste tous les fichiers JAR pour le débogage
+            }
+        }
+
+        stage('Rename JAR if necessary') {
+            steps {
+                // Renomme le fichier JAR généré pour qu'il corresponde au nom attendu par le Dockerfile
+                script {
+                    sh 'mv target/*.jar target/gestion-station-sky-1.0.jar'
+                }
             }
         }
 
@@ -50,15 +52,15 @@ pipeline {
             }
         }
 
-        stage('Test Stage') {
+        stage('Run Tests') {
             steps {
-                sh 'mvn test'
+                sh 'mvn test'  // Exécute les tests Maven
             }
         }
 
-        stage('Maven Deploy') {
+        stage('Deploy with Maven') {
             steps {
-                sh 'mvn deploy'
+                sh 'mvn deploy'  // Déploie le package Maven
             }
         }
 
@@ -66,9 +68,7 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'docker-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                        sh '''
-                            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-                        '''
+                        sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
                     }
                 }
             }
@@ -77,9 +77,8 @@ pipeline {
         stage('Build and Push Docker Image') {
             steps {
                 script {
-                    // Suppression de --platform linux/arm64 pour plus de compatibilité
-                    sh 'docker build -t my-image:${BUILD_ID} .'
-                    sh 'docker push my-image:${BUILD_ID}'
+                    sh 'docker build -t my-image:${BUILD_ID} .'  // Construit l'image Docker avec le BUILD_ID comme tag
+                    sh 'docker push my-image:${BUILD_ID}'  // Pousse l'image Docker vers le registre
                 }
             }
         }
@@ -87,7 +86,7 @@ pipeline {
 
     post {
         always {
-            junit '**/target/surefire-reports/*.xml'  // Enregistre les résultats de test
+            junit '**/target/surefire-reports/*.xml'  // Archive les résultats des tests JUnit pour l'analyse postérieure
         }
     }
 }
