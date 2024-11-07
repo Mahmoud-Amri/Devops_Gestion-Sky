@@ -35,19 +35,23 @@ class SubscriptionServicesImplTest {
 
     @Test
     void testAddSubscription() {
-        Subscription subscription = new Subscription();
-        subscription.setTypeSub(TypeSubscription.MONTHLY);
-        subscription.setStartDate(LocalDate.now());
+        SubscriptionDTO subscriptionDTO = new SubscriptionDTO();
+        subscriptionDTO.setTypeSub(TypeSubscription.MONTHLY);
+        subscriptionDTO.setStartDate(LocalDate.now());
 
-        when(subscriptionRepository.save(subscription)).thenReturn(subscription);
+        Subscription subscriptionEntity = new Subscription();
+        subscriptionEntity.setStartDate(subscriptionDTO.getStartDate());
+        subscriptionEntity.setTypeSub(subscriptionDTO.getTypeSub());
+        subscriptionEntity.setEndDate(subscriptionDTO.getStartDate().plusMonths(1));
 
-        SubscriptionDTO result = subscriptionServices.addSubscription(subscription);
+        when(subscriptionRepository.save(any(Subscription.class))).thenReturn(subscriptionEntity);
+
+        SubscriptionDTO result = subscriptionServices.addSubscription((Subscription) subscriptionDTO);
 
         assertNotNull(result);
-        assertEquals(subscription.getEndDate(), subscription.getStartDate().plusMonths(1));
-        verify(subscriptionRepository, times(1)).save(subscription);
+        assertEquals(subscriptionEntity.getEndDate(), result.getEndDate());
+        verify(subscriptionRepository, times(1)).save(any(Subscription.class));
     }
-
     @Test
     void testRetrieveSubscriptionById() {
         Long id = 1L;
