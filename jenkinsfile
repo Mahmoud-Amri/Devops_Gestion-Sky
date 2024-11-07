@@ -16,10 +16,9 @@ pipeline {
             }
         }
 
-
         stage('Compile Project') {
             steps {
-                sh 'mvn clean package'  // Compile le projet et génère le fichier JAR dans le dossier target/
+                sh 'mvn clean package' // Compile le projet et génère le fichier JAR dans le dossier target/
             }
         }
 
@@ -27,7 +26,7 @@ pipeline {
             steps {
                 // Affiche le contenu du dossier target pour vérifier la génération du JAR
                 sh 'ls -la target/'
-                sh 'find . -name "*.jar"'  // Liste tous les fichiers JAR pour le débogage
+                sh 'find . -name "*.jar"' // Liste tous les fichiers JAR pour le débogage
             }
         }
 
@@ -44,7 +43,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                    mvn sonar:sonar \
+                        mvn sonar:sonar \
                         -Dsonar.projectKey="Jenkins_Integration" \
                         -Dsonar.host.url=${SONARQUBE_URL} \
                         -Dsonar.token=${SONARQUBE_TOKEN}
@@ -55,13 +54,13 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh 'mvn test'  // Exécute les tests Maven
+                sh 'mvn test' // Exécute les tests Maven
             }
         }
 
         stage('Deploy with Maven') {
             steps {
-                sh 'mvn deploy'  // Déploie le package Maven
+                sh 'mvn deploy' // Déploie le package Maven
             }
         }
 
@@ -79,7 +78,6 @@ pipeline {
             steps {
                 script {
                     def dockerImage = "amrimahmoud/my-image:${BUILD_ID}"
-
                     sh "docker build -t ${dockerImage} ."
                     sh "docker push ${dockerImage}"
                 }
@@ -87,19 +85,20 @@ pipeline {
         }
 
         stage('Start Docker Compose') {
-             steps {
-                 script {
-                       // Démarre les services définis dans docker-compose.yml
-                     sh 'docker-compose -f docker-compose.yml up -d'
-                       // Attendre un peu pour que les services soient pleinement opérationnels
-                     sleep 10
-                  }
-              }
-          }
+            steps {
+                script {
+                    // Démarre les services définis dans docker-compose.yml
+                    sh 'docker-compose -f docker-compose.yml up -d'
+                    // Attendre un peu pour que les services soient pleinement opérationnels
+                    sleep 10
+                }
+            }
+        }
+    }
 
     post {
         always {
-            junit '**/target/surefire-reports/*.xml'  // Archive les résultats des tests JUnit pour l'analyse postérieure
+            junit '**/target/surefire-reports/*.xml' // Archive les résultats des tests JUnit pour l'analyse postérieure
         }
     }
 }
