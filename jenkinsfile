@@ -16,16 +16,6 @@ pipeline {
             }
         }
 
-        stage('Start Docker Compose') {
-            steps {
-                script {
-                    // Démarre les services définis dans docker-compose.yml
-                    sh 'docker-compose -f docker-compose.yml up -d'
-                    // Attendre un peu pour que les services soient pleinement opérationnels
-                    sleep 10
-                }
-            }
-        }
 
         stage('Compile Project') {
             steps {
@@ -96,15 +86,16 @@ pipeline {
             }
         }
 
-        stage('Stop Docker Compose') {
-            steps {
-                script {
-                    // Arrêter et supprimer les conteneurs Docker Compose après le test/deploiement
-                    sh 'docker-compose -f docker-compose.yml down'
-                }
-            }
-        }
-    }
+      stage('Start Docker Compose') {
+               steps {
+                   script {
+                       // Démarre les services définis dans docker-compose.yml
+                       sh 'docker-compose -f docker-compose.yml up -d'
+                       // Attendre un peu pour que les services soient pleinement opérationnels
+                       sleep 10
+                   }
+               }
+           }
 
     post {
         always {
