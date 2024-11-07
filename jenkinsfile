@@ -24,6 +24,7 @@ pipeline {
 
         stage('Verify JAR') {
             steps {
+                // Affiche le contenu du dossier target pour vérifier la génération du JAR
                 sh 'ls -la target/'
                 sh 'find . -name "*.jar"' // Liste tous les fichiers JAR pour le débogage
             }
@@ -31,6 +32,7 @@ pipeline {
 
         stage('Rename JAR if necessary') {
             steps {
+                // Renomme le fichier JAR généré pour qu'il corresponde au nom attendu par le Dockerfile
                 script {
                     sh 'mv target/*.jar target/gestion-station-sky-1.0.jar'
                 }
@@ -52,13 +54,13 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh 'mvn test'
+                sh 'mvn test' // Exécute les tests Maven
             }
         }
 
         stage('Deploy with Maven') {
             steps {
-                sh 'mvn deploy'
+                sh 'mvn deploy' // Déploie le package Maven
             }
         }
 
@@ -82,33 +84,16 @@ pipeline {
             }
         }
 
-        stage('Check and Install Docker Compose') {
-            steps {
-                script {
-                    def dockerComposeInstalled = sh(script: 'which docker-compose || echo "not_installed"', returnStdout: true).trim()
-                    if (dockerComposeInstalled == "not_installed") {
-                        sh '''
-                            curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-                            chmod +x /usr/local/bin/docker-compose
-                        '''
+        stage('Run Docker Containers') {
+              steps {
+                        sh 'docker compose up -d'
                     }
                 }
-            }
-        }
-
-        stage('Start Docker Compose') {
-            steps {
-                script {
-                    sh '/usr/local/bin/docker-compose -f docker-compose.yml up -d'
-                    sleep 10
-                }
-            }
-        }
     }
 
     post {
         always {
-            junit '**/target/surefire-reports/*.xml'
+            junit '**/target/surefire-reports/*.xml' // Archive les résultats des tests JUnit pour l'analyse postérieure
         }
     }
 }
