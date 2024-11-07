@@ -18,7 +18,13 @@ pipeline {
 
         stage('Compile Stage') {
             steps {
-                sh 'mvn clean compile'
+                sh 'mvn clean package'  // Génère le JAR dans target/
+            }
+        }
+
+        stage('Verify JAR') {
+            steps {
+                sh 'ls -la target/'  // Vérifie que le fichier JAR existe
             }
         }
 
@@ -62,10 +68,7 @@ pipeline {
         stage('Build and Push Docker Image') {
             steps {
                 script {
-                    // Build Docker image pour ARM
                     sh 'docker build --platform linux/arm64 -t my-image:${BUILD_ID} .'
-
-                    // Push Docker image
                     sh 'docker push my-image:${BUILD_ID}'
                 }
             }
