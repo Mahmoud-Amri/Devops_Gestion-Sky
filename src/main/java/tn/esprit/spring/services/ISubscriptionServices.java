@@ -1,26 +1,23 @@
 package tn.esprit.spring.services;
 
-import tn.esprit.spring.dtos.SubscriptionDTO;
-import tn.esprit.spring.entities.Subscription;
-import tn.esprit.spring.entities.TypeSubscription;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
+import tn.esprit.spring.entities.Subscription;
+import tn.esprit.spring.entities.TypeSubscription;
+
 public interface ISubscriptionServices {
 
-	SubscriptionDTO addSubscription(Subscription subscriptionDTO);
+	Subscription addSubscription(Subscription subscription);
 
-	SubscriptionDTO updateSubscription(SubscriptionDTO subscriptionDTO);
+	Subscription updateSubscription(Subscription subscription);
 
-	SubscriptionDTO retrieveSubscriptionById(Long numSubscription);
+	Subscription retrieveSubscriptionById(Long numSubscription);
 
-	Set<SubscriptionDTO> getSubscriptionByType(TypeSubscription type);
+	Set<Subscription> getSubscriptionByType(TypeSubscription type);
 
-	List<SubscriptionDTO> retrieveSubscriptionsByDates(LocalDate startDate, LocalDate endDate);
+	List<Subscription> retrieveSubscriptionsByDates(LocalDate startDate, LocalDate endDate);
 
 	void retrieveSubscriptions();
-
-	void showMonthlyRecurringRevenue();
 }

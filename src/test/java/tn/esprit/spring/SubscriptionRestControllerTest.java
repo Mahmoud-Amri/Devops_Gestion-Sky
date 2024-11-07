@@ -1,62 +1,117 @@
 package tn.esprit.spring;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 import tn.esprit.spring.controllers.SubscriptionRestController;
-import tn.esprit.spring.dtos.SubscriptionDTO;
 import tn.esprit.spring.entities.Subscription;
+import tn.esprit.spring.entities.TypeSubscription;
 import tn.esprit.spring.services.ISubscriptionServices;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+@WebMvcTest(SubscriptionRestController.class)
+public class SubscriptionRestControllerTest {
 
-class SubscriptionRestControllerTest {
+    @Autowired
+    private MockMvc mockMvc;
 
-    @InjectMocks
-    private SubscriptionRestController subscriptionRestController;
-
-    @Mock
+    @MockBean
     private ISubscriptionServices subscriptionServices;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Test
+    public void testAddSubscription() throws Exception {
+        Subscription subscription = new Subscription();
+        subscription.setNumSub(1L);
+        subscription.setTypeSub(TypeSubscription.ANNUAL);
+
+        when(subscriptionServices.addSubscription(any(Subscription.class))).thenReturn(subscription);
+
+        mockMvc.perform(post("/subscription/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(subscription)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.numSub").value(subscription.getNumSub()))
+                .andExpect(jsonPath("$.typeSub").value(subscription.getTypeSub().toString()));
+
+        verify(subscriptionServices, times(1)).addSubscription(any(Subscription.class));
     }
 
-    // Example Test for `addSubscription`
     @Test
-    void testAddSubscription() {
+    public void testGetById() throws Exception {
         Subscription subscription = new Subscription();
-        SubscriptionDTO expectedDTO = new SubscriptionDTO(); // Mocked DTO conversion
+        subscription.setNumSub(1L);
 
-        when(subscriptionServices.addSubscription(subscription)).thenReturn(expectedDTO);
+        when(subscriptionServices.retrieveSubscriptionById(1L)).thenReturn(subscription);
 
-        SubscriptionDTO result = subscriptionRestController.addSubscription(subscription);
+        mockMvc.perform(get("/subscription/get/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.numSub").value(subscription.getNumSub()));
 
-        assertNotNull(result);
-        assertEquals(expectedDTO, result);
-        verify(subscriptionServices, times(1)).addSubscription(subscription);
+        verify(subscriptionServices, times(1)).retrieveSubscriptionById(1L);
     }
 
-    // Example Test for `getById`
     @Test
-    void testGetById() {
-        Long id = 1L;
+    public void testGetSubscriptionsByType() throws Exception {
+        Set<Subscription> subscriptions = Set.of(new Subscription());
+        TypeSubscription type = TypeSubscription.ANNUAL;
+
+        when(subscriptionServices.getSubscriptionByType(type)).thenReturn(subscriptions);
+
+        mockMvc.perform(get("/subscription/all/" + type))
+                .andExpect(status().isOk());
+
+        verify(subscriptionServices, times(1)).getSubscriptionByType(type);
+    }
+
+    @Test
+    public void testUpdateSubscription() throws Exception {
         Subscription subscription = new Subscription();
-        subscription.setNumSub(id);
-        SubscriptionDTO expectedDTO = new SubscriptionDTO();
-        expectedDTO.setNumSub(id); // assuming DTO contains similar fields
+        subscription.setNumSub(1L);
+        subscription.setTypeSub(TypeSubscription.MONTHLY);
 
-        when(subscriptionServices.retrieveSubscriptionById(id)).thenReturn(expectedDTO);
+        when(subscriptionServices.updateSubscription(any(Subscription.class))).thenReturn(subscription);
 
-        SubscriptionDTO result = subscriptionRestController.getById(id);
+        mockMvc.perform(put("/subscription/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(subscription)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.numSub").value(subscription.getNumSub()))
+                .andExpect(jsonPath("$.typeSub").value(subscription.getTypeSub().toString()));
 
-        assertNotNull(result);
-        assertEquals(id, result.getNumSub());
-        verify(subscriptionServices, times(1)).retrieveSubscriptionById(id);
+        verify(subscriptionServices, times(1)).updateSubscription(any(Subscription.class));
+    }
+
+    @Test
+    public void testGetSubscriptionsByDates() throws Exception {
+        LocalDate startDate = LocalDate.now().minusMonths(1);
+        LocalDate endDate = LocalDate.now();
+        List<Subscription> subscriptions = List.of(new Subscription());
+
+        when(subscriptionServices.retrieveSubscriptionsByDates(startDate, endDate)).thenReturn(subscriptions);
+
+        mockMvc.perform(get("/subscription/all/" + startDate + "/" + endDate))
+                .andExpect(status().isOk());
+
+        verify(subscriptionServices, times(1)).retrieveSubscriptionsByDates(startDate, endDate);
     }
 }
