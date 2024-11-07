@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,7 +26,7 @@ import tn.esprit.spring.services.ISubscriptionServices;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-
+@SpringBootTest
 @WebMvcTest(SubscriptionRestController.class)
 public class SubscriptionRestControllerTest {
 

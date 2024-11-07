@@ -1,4 +1,4 @@
-package tn.esprit.spring.services;
+package tn.esprit.spring;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -20,6 +20,7 @@ import tn.esprit.spring.entities.Subscription;
 import tn.esprit.spring.entities.TypeSubscription;
 import tn.esprit.spring.repositories.ISkierRepository;
 import tn.esprit.spring.repositories.ISubscriptionRepository;
+import tn.esprit.spring.services.SubscriptionServicesImpl;
 
 @SpringBootTest
 public class SubscriptionServicesImplTest {
