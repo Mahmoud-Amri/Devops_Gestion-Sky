@@ -5,10 +5,8 @@ services:
     image: mysql:8.0
     container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: your_password
+      MYSQL_ROOT_PASSWORD: root  # Mot de passe root
       MYSQL_DATABASE: stationSki
-      MYSQL_USER: root
-      MYSQL_PASSWORD: your_password
     volumes:
       - mysql_data:/var/lib/mysql
 
@@ -20,7 +18,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/stationSki?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: your_password  # Utiliser les mêmes informations que celles définies dans MySQL
+      SPRING_DATASOURCE_PASSWORD: root  # Correspond au mot de passe root MySQL
     depends_on:
       - mysql
 
