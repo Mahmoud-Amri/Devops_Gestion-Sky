@@ -74,14 +74,17 @@ pipeline {
             }
         }
 
-        stage('Build and Push Docker Image') {
-            steps {
-                script {
-                    sh 'docker build -t my-image:${BUILD_ID} .'  // Construit l'image Docker avec le BUILD_ID comme tag
-                    sh 'docker push my-image:${BUILD_ID}'  // Pousse l'image Docker vers le registre
-                }
-            }
-        }
+      stage('Build and Push Docker Image') {
+          steps {
+              script {
+                  def dockerImage = "amrimahmoud/my-image:${BUILD_ID}"  // Remplacez 'mon-utilisateur' par votre nom d'utilisateur Docker
+
+                  sh "docker build -t ${dockerImage} ."
+                  sh "docker push ${dockerImage}"
+              }
+          }
+      }
+
     }
 
     post {
