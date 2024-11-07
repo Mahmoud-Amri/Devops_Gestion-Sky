@@ -16,6 +16,17 @@ pipeline {
             }
         }
 
+        stage('Start Docker Compose') {
+            steps {
+                script {
+                    // Démarre les services définis dans docker-compose.yml
+                    sh 'docker-compose -f docker-compose.yml up -d'
+                    // Attendre un peu pour que les services soient pleinement opérationnels
+                    sleep 10
+                }
+            }
+        }
+
         stage('Compile Project') {
             steps {
                 sh 'mvn clean package'  // Compile le projet et génère le fichier JAR dans le dossier target/
@@ -74,17 +85,25 @@ pipeline {
             }
         }
 
-      stage('Build and Push Docker Image') {
-          steps {
-              script {
-                  def dockerImage = "amrimahmoud/my-image:${BUILD_ID}"  // Remplacez 'mon-utilisateur' par votre nom d'utilisateur Docker
+        stage('Build and Push Docker Image') {
+            steps {
+                script {
+                    def dockerImage = "amrimahmoud/my-image:${BUILD_ID}"
 
-                  sh "docker build -t ${dockerImage} ."
-                  sh "docker push ${dockerImage}"
-              }
-          }
-      }
+                    sh "docker build -t ${dockerImage} ."
+                    sh "docker push ${dockerImage}"
+                }
+            }
+        }
 
+        stage('Stop Docker Compose') {
+            steps {
+                script {
+                    // Arrêter et supprimer les conteneurs Docker Compose après le test/deploiement
+                    sh 'docker-compose -f docker-compose.yml down'
+                }
+            }
+        }
     }
 
     post {
