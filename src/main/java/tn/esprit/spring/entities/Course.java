@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -32,7 +33,6 @@ public class Course implements Serializable {
 	int timeSlot;
 
 	@JsonIgnore
-	@OneToMany(mappedBy= "course")
-	Set<Registration> registrations;
-
+	@OneToMany(mappedBy = "course")
+	private Set<Registration> registrations; // Made private
 }

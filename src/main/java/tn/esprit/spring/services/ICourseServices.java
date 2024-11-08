@@ -1,19 +1,20 @@
 package tn.esprit.spring.services;
 
+import tn.esprit.spring.dto.CourseDTO;
+import tn.esprit.spring.dto.CourseDTO;
 import tn.esprit.spring.entities.Course;
-import tn.esprit.spring.entities.TypeCourse;
 
 import java.util.List;
 
 public interface ICourseServices {
 
-    List<Course> retrieveAllCourses();
+    List<CourseDTO> retrieveAllCourses();
 
-    Course  addCourse(Course  course);
+    CourseDTO  addCourse(Course  course);
 
-    Course updateCourse(Course course);
+    CourseDTO updateCourse(Course course);
 
-    Course retrieveCourse(Long numCourse);
+    CourseDTO retrieveCourse(Long numCourse);
 
 
 }
