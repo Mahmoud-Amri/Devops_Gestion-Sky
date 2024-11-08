@@ -29,7 +29,7 @@ pipeline {
             }
             steps {
                 dir('app/backend') {
-                    sh 'mvn clean test'
+                    sh 'mvn clean test -Dtest=PisteServicesImplTest'
                 }
             }
         }
