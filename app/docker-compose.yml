@@ -5,7 +5,7 @@ services:
     container_name: db
     restart : always
     ports:
-      - "33060:3306"
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: my-secret-pw
       MYSQL_DATABASE: db
@@ -32,7 +32,7 @@ services:
     ports:
       - "9104:9104"
     environment:
-      - DATA_SOURCE_NAME=root:my-secret-pw@db:33060/db
+      - DATA_SOURCE_NAME=root:my-secret-pw@db:3306/db
       - MYSQLD_EXPORTER_USERNAME=root
       - MYSQLD_EXPORTER_PASSWORD=my-secret-pw
     networks:
@@ -51,6 +51,7 @@ services:
        - springBootLogs:/var/log/spring-boot
     ports:
       - 8090:8090
+      - 8089:8089
     networks:
       - backend-network
 
