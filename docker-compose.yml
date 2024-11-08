@@ -1,0 +1,19 @@
+version: "3.3"
+services:
+  mysqldb:
+    container_name: mysqldb
+    image: mysql:8
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - /home/mysql/data:/var/lib/mysql
+
+  spring_app:
+    image: dhiasaibi/dhiaeddinesaibi_g2_devops_gestion-sky:latest  # Using latest tag here instead of tag 1.0
+    container_name: devopscontainer
+    restart: on-failure
+    ports:
+      - 9096:9096  # Ensure  this matches the port exposed in Dockerfile which is 9096 and server.port in application.properties
+    depends_on:
+      - mysqldb
