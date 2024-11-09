@@ -46,18 +46,18 @@ pipeline {
             }
         }
         
-             stage('SonarQube Analysis') {
-            environment {
+         stage('SonarQube Analysis') {
+             environment {
                 scannerHome = tool 'SonarQubeScanner' // SonarQube scanner tool name in Jenkins
             }
             
                    tools {
                 maven "${MAVEN_TOOL}"
             }
-            steps {
+                steps {
            
                 dir('app/backend') {
-                   // withSonarQubeEnv(installationName :"${SONARQUBE_ENV}") {
+                    withSonarQubeEnv(installationName :"${SONARQUBE_ENV}") {
 
                              sh """
                                 mvn clean verify sonar:sonar \
@@ -68,7 +68,8 @@ pipeline {
 
                     }
                 }
-            }
+             }
+          }
         
 
         stage('Build Docker Image') {
