@@ -4,15 +4,14 @@ pipeline {
     environment {
         GIT_REPO = 'https://github.com/Mahmoud-Amri/Devops_Gestion-Sky.git'
         BRANCH = 'feature/PisteRest'
-        DOCKER_IMAGE = 'amine6207/amineayari:backend-latest'
-        DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
+        DOCKER_IMAGE = 'amine6207/amineayari'
         SONARQUBE_ENV = 'SonarQubeScanner'
         SONARQUBE_PROJECT_KEY ='Montoring-containerization-springBoot-angular_AY-Xciv7g-qPkHtLhErl'
         SONARQUBE_CREDS = credentials('9481aa8a-1116-40ea-aeaf-436f71baf215')
         NEXUS_URL = 'http://172.18.0.1:8081/repository/maven-releases/'
-        NEXUS_CREDENTIALS_ID = 'nexus-credentials'
+        NEXUS_CREDENTIALS_ID = 'nexus-credential'
         MAVEN_TOOL = 'mvn' // Maven tool name in Jenkins
-        registryCredential = 'dockerhub'
+        registryCredential = 'docker-cred'
 
     }
 
@@ -30,6 +29,7 @@ pipeline {
             steps {
                 dir('app/backend') {
                     sh 'mvn clean test'
+                    
                 }
             }
         }
@@ -57,7 +57,7 @@ pipeline {
             steps {
            
                 dir('app/backend') {
-                    withSonarQubeEnv(installationName :"${SONARQUBE_ENV}") {
+                   // withSonarQubeEnv(installationName :"${SONARQUBE_ENV}") {
 
                              sh """
                                 mvn clean verify sonar:sonar \
@@ -75,7 +75,7 @@ pipeline {
             steps {
                 dir('app/backend') {
                     script {
-               dockerImage = docker.build DOCKER_IMAGE
+               dockerImage = docker.build("${DOCKER_IMAGE}:${BUILD_NUMBER}")
 
 
                     }
@@ -105,7 +105,7 @@ dockerImage.push()
                     repository: 'maven-releases',
                     credentialsId: NEXUS_CREDENTIALS_ID,
                     artifacts: [
-                        [artifactId: 'DevOps_Project', classifier: '', file: 'app/backend/target/gestion-station-ski.jar', type: 'jar']
+                        [artifactId: 'DevOps_Project', classifier: '', file: 'app/backend/target/gestion-station-ski-1.0.jar', type: 'jar']
                     ]
                 )
             }

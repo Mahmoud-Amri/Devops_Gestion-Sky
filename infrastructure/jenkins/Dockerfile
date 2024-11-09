@@ -16,9 +16,8 @@ RUN apt-get update && \
 
 # Create the Docker group and add the Jenkins user to it
 RUN groupadd docker && usermod -aG docker jenkins
-
 # Switch back to the Jenkins user
-USER jenkins
+#USER jenkins
 
 # Expose Jenkins port
 EXPOSE 8080
