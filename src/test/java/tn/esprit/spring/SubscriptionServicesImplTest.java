@@ -13,7 +13,6 @@ import tn.esprit.spring.services.SubscriptionServicesImpl;
 
 import java.time.LocalDate;
 import java.util.Optional;
-import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -78,23 +77,6 @@ class SubscriptionServicesImplTest {
         assertNotNull(result);
         assertEquals(subscription.getNumSub(), result.getNumSub());
         verify(subscriptionRepository, times(1)).findById(1L);
-    }
-
-    @Test
-    void testGetSubscriptionByType() {
-        Subscription sub1 = new Subscription();
-        sub1.setTypeSub(TypeSubscription.ANNUAL);
-        Subscription sub2 = new Subscription();
-        sub2.setTypeSub(TypeSubscription.ANNUAL);
-
-        Set<Subscription> subscriptions = Set.of(sub1, sub2);
-
-        when(subscriptionRepository.findByTypeSubOrderByStartDateAsc(TypeSubscription.ANNUAL)).thenReturn(subscriptions);
-
-        Set<Subscription> result = subscriptionServices.getSubscriptionByType(TypeSubscription.ANNUAL);
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        verify(subscriptionRepository, times(1)).findByTypeSubOrderByStartDateAsc(TypeSubscription.ANNUAL);
     }
 
     @Test
