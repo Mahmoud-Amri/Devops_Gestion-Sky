@@ -14,8 +14,11 @@
 	<name>gestion-station-ski</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
-		<java.version>1.8</java.version>
-		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
+			<java.version>1.8</java.version>
+			<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
+			<sonar.projectKey>tn.esprit.spring:gestion-station-ski</sonar.projectKey>
+			<sonar.host.url>http://192.168.3.44:9000</sonar.host.url>
+			<sonar.login>squ_99b9f8c99a2efeefd4e42353a31ff3a73c972423</sonar.login>
 	</properties>
 	<distributionManagement>
 		<repository>
@@ -78,6 +81,25 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.7</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
