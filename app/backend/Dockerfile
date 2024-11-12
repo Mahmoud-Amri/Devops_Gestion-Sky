@@ -1,7 +1,7 @@
 # Stage 1: Build the application
 FROM maven:3-openjdk-17-slim AS build
 
-LABEL maintainer="NacerkH"
+LABEL maintainer="AyariAmine"
 
 # Create and set the working directory
 WORKDIR /workspace
