@@ -13,14 +13,12 @@ pipeline {
     stages {
         stage('GIT') {
             steps {
-                // Cloner le dépôt Git
                 git branch: 'gestion_Subscription', url: 'https://github.com/Mahmoud-Amri/Devops_Gestion-Sky.git'
             }
         }
 
         stage('Compile Stage') {
             steps {
-                // Compiler le projet
                 sh 'mvn clean compile'
             }
         }
@@ -34,7 +32,6 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    // Running SonarQube analysis
                     sh """
                         mvn sonar:sonar \
                         -Dsonar.projectKey=Devops_Gestion-Sky \
@@ -61,35 +58,29 @@ pipeline {
                 }
             }
         }
-         stage('BUILD IMAGE') {
-    steps {
-        echo 'Building Docker image...'
-        sh 'docker build -t ademseddik123/gestion-subcription .'  // Build without specifying a username in the tag
-    }
-}
 
+        stage('BUILD IMAGE') {
+            steps {
+                echo 'Building Docker image...'
+                sh 'docker build -t ademseddik123/gestion-subscription .'
+            }
+        }
 
+        stage('PUSH IMAGE') {
+            steps {
+                echo 'Pushing Docker image...'
+                sh '''
+                    echo "Adminadmin0." | docker login -u ademseddik123 --password-stdin
+                    docker push ademseddik123/gestion-subscription
+                '''
+            }
+        }
 
-stage('PUSH IMAGE') {
-    steps {
-        echo 'Pushing Docker image...'
-        sh '''
-            echo "Adminadmin0." | docker login -u ademseddik123 --password-stdin
-            docker push ademseddik123/gestion-subcription
-        '''
-    }
-}
-
-        
         stage('DOCKER COMPOSE') {
             steps {
                 echo 'Starting Backend + DB with Docker Compose...'
                 sh 'docker-compose up -d'
             }
         }
-        
-    }
-
-        
     }
 }
