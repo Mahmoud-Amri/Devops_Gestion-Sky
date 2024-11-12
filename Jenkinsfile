@@ -32,7 +32,7 @@ pipeline {
                     sh """
                         mvn sonar:sonar \
                         -Dsonar.projectKey=Devops_Gestion-Sky \
-                        -Dsonar.host.url=http://192.168.88.132:9000/ \
+                        -Dsonar.host.url=http://10.0.2.15:9000/ \
                         -Dsonar.login=sqa_92e56bd0910a7d915393ea19b1aae53609f6ed5c
                     """
                 }
@@ -59,7 +59,7 @@ pipeline {
         stage('BUILD IMAGE') {
             steps {
                 echo 'Building Docker image...'
-                sh 'docker build -t ademseddik123/gestion-subscription .'
+                sh 'docker build -t fatmaouerghi123/gestion-course .'
             }
         }
 
@@ -67,8 +67,8 @@ pipeline {
             steps {
                 echo 'Pushing Docker image...'
                 sh '''
-                    echo "Adminadmin0." | docker login -u ademseddik123 --password-stdin
-                    docker push ademseddik123/gestion-subscription
+                    echo "Adminadmin0." | docker login -u fatmaouerghi123 --password-stdin
+                    docker push fatmaouerghi123/gestion-course
                 '''
             }
         }
