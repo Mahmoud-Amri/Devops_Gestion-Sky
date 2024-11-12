@@ -59,7 +59,7 @@ pipeline {
         stage('BUILD IMAGE') {
             steps {
                 echo 'Building Docker image...'
-                sh 'docker build -t fatmaouerghi123/gestion-course .'
+                sh 'docker build -t fatmaouergh/gestion-course .'
             }
         }
 
@@ -67,8 +67,8 @@ pipeline {
             steps {
                 echo 'Pushing Docker image...'
                 sh '''
-                    echo "Adminadmin0." | docker login -u fatmaouerghi123 --password-stdin
-                    docker push fatmaouerghi123/gestion-course
+                    echo "Adminadmin0." | docker login -u fatmaouerghi --password-stdin
+                    docker push fatmaouerghi/gestion-course
                 '''
             }
         }
