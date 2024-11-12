@@ -16,7 +16,7 @@ services:
   ademseddik123-gestion-subscription:
     depends_on:
       - mysqldb
-    image: ademseddik123/gestion-subcription
+    image: ademseddik123/gestion-subscription
     #build : ./
     restart: on-failure
     ports:
