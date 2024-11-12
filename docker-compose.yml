@@ -13,7 +13,7 @@ services:
     volumes:
       - db:/var/lib/mysql
 
-  ademseddik123/gestion-subscription:
+  ademseddik123-gestion-subscription:
     depends_on:
       - mysqldb
     image: ademseddik123/gestion-subcription
@@ -23,7 +23,7 @@ services:
       - 8089:8089
     environment:
       SPRING_APPLICATION_JSON: '{
-        "spring.datasource.url"  : "jdbc:mysql://mysqldb:3306/gestion-subscription-db?createDatabaseIfNotExist=true",
+        "spring.datasource.url"  : "jdbc:mysql://localhost:3306/stationSki?createDatabaseIfNotExist=true",
         "spring.datasource.username" : "root",
         "spring.datasource.password" : null,
         "spring.jpa.hibernate.ddl-auto" : "update"
@@ -34,7 +34,7 @@ services:
   mysql-exporter:
     image: prom/mysqld-exporter
     environment:
-      - DATA_SOURCE_NAME=root@(mysqldb:3306)/gestion-subscription-db
+      - DATA_SOURCE_NAME=root@(mysqldb:3306)/stationSki
     ports:
       - 9104:9104
     depends_on:
